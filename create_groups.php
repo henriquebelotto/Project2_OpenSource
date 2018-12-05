@@ -197,7 +197,7 @@ if (isset($_SESSION['admin'])) {
             echo 'Date:' . $_POST['dateID'] . '<br>';
             echo 'group number: ' . $_POST['groupSize'] . '<br>';
         }
-        
+
 echo '</div>    
     ';
 
