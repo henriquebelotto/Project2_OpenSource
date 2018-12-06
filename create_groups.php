@@ -186,16 +186,71 @@ if (isset($_SESSION['admin'])) {
         </div>
     </div>';
 
-        // CREATE HERE A FUNCTION TO LOOK FOR THE interestID and dateID on the userAccount according to the
-        // selected interestID and dateID and then generate groups according to the group size
-        // can be like group "interedID - dateID - 1"
-        //                   "interedID - dateID - 2"
-        // and goes on...
-        // store these group numbers into the DB
-        if(isset($_POST['submit'])){
-            echo 'Interest:' . $_POST['interestID'] . '<br>';
-            echo 'Date:' . $_POST['dateID'] . '<br>';
-            echo 'group number: ' . $_POST['groupSize'] . '<br>';
+    function assignGroup()
+    {
+        //get information
+        $interestID=$_POST['interestID'];
+        $dateID=$_POST['dateID'];
+        $groupSize=$_POST['groupSize'];
+
+        $dbHost = "localhost";
+        $dbUsername = "root";
+        $dbPassword = "";
+        $dbName = "xyztravelagency";
+        $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
+        or die("Failed to connect.");
+
+        //get current groupID
+        $queryMaxGroup="SELECT MAX(groupID) FROM USERACCOUNT";
+        $maxGroup=mysqli_query($con, $queryMaxGroup) or die("Failed to get group number" . mysqli_error($con));
+        if ($maxGroup=""){
+            $maxGroup=0;
+        }
+        $maxGroup++;
+
+        //select qulified user
+        $query="SELECT registrationid FROM USERACCOUNT
+                WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
+        $result = mysqli_query($con, $query) or die("Select Error" . mysqli_error($con));
+
+        //declare empty array
+        $arrayOfRows = array();
+        //assign all value to new array
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $arrayOfRows[] = $row;
+            }
+        }
+        print_r($arrayOfRows);
+        //if the group size > exist user
+        $interestNum = count($arrayOfRows);
+        if (count($arrayOfRows)<=$groupSize){
+            echo 'The number of people who has the same interest on the same day is: '. $interestNum;
+//            for ($x=0;$x<$interestNum;$x++){
+//                $querySetGroup="UPDATE useraccount SET groupID='$maxGroup' WHERE registrationId='$arrayOfRows[$x]'";
+//                $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
+//            }
+            foreach($arrayOfRows as $row ){
+                $querySetGroup = "UPDATE useraccount SET groupID='$maxGroup' WHERE registrationID='$row[registrationID]'";
+                $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
+            }
+            //if the group size < exist user
+        }else{
+            $groupNum=ceil(count($arrayOfRows)/$groupSize);
+            for ($g=0;$g<$groupNum;$g++) {
+                for ($x = 0; $x < $groupSize; $x++) {
+                    $n=$x+$groupNum*$g;
+                    $querySetGroup = "UPDATE useraccount SET groupID='$maxGroup' WHERE registrationId='$arrayOfRows[$n]'";
+                    $resultSetGroup = mysqli_query($con, $querySetGroup);
+                }
+            }
+        }
+    }
+
+
+
+            assignGroup();
+
         }
 
 echo '</div>    
