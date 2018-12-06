@@ -1,0 +1,151 @@
+/*
+ CSS CODE FOR WEB DESIGN PHASE 3
+
+ Student: Henrique Belotto
+ Student Number: N01245990;
+*/
+
+/* Configuring the Header section */
+#topNav, #whatToDoNav{
+	background-color: black;
+
+    min-height: 55px; /* This is to ensure that the hamburguer 
+    icon menu will always visibble */
+
+    border-bottom: 1px white solid;
+
+}
+
+#topNav a{
+	font-size: 1.5em;
+}
+
+
+#logo{
+    max-width: 50vw;
+
+}
+
+
+#headerDiv{
+    width: 100%;
+    height: 85vh;
+	background-image: url(../img/sidneyOperaHouse.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: contain;
+    background-color: black;
+}
+
+#headerCountry{ 
+    position: absolute;
+    top: 50vh;  /*this set the distance from the top of the page to the title*/
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10vh;
+    font-style: italic;
+    color: #89b6ff;
+    opacity: 0.8;
+    background-color: black;
+    padding-right: 5px;
+    padding-left: 5px;
+}   
+
+#aboutUsCardDeckID{
+    margin-top: 25vh;
+}
+
+.linkedinLogo{
+    width: 35px;
+}
+
+/* -------------------------------------------------------------- */
+
+/* Layout for the images between sections */
+
+#imageAfterButtons, #imageAfterAboutCountry, #imageAfterWhatToDo, #imageAfterHowGetThere{
+    width: 100%;
+    height: 65vh;
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    background-attachment: fixed;
+    background-color: white;
+}
+
+#imageAfterButtons{
+    background-image: url(../img/perth.jpg);
+}
+
+#imageAfterAboutCountry{
+    background-image: url(../img/sydneycove.jpg);
+
+}
+
+#imageAfterWhatToDo{
+    background-image: url(../img/Australia_beach.png);   
+}
+
+#imageAfterHowGetThere{
+    background-image: url(../img/australia_outback.png);   
+}
+
+
+
+/* -------------------------------------------------------------- */
+
+.picturesAboutCountry{
+    max-width: 15vw;
+    /*float: right;*/
+}
+
+.AboutCountry{
+    overflow-y: scroll;
+    margin: 1%;
+    padding-left: 2px;
+    padding-right: 2px;
+    max-height: 350px;
+
+}
+
+.carousel-inner img{
+ width: 800px;
+ height: 450px;
+}
+
+#sydneyCarousel{
+    border: 2px black solid;
+}
+
+.spanOverlay{
+   color: white; 
+   font: bold 24px/45px Helvetica, Sans-Serif; 
+   letter-spacing: -1px;  
+   background: rgb(0, 0, 0); /* fallback color */
+   background: rgba(0, 0, 0, 0.7);
+   padding: 10px; 
+}
+
+
+/* CONFIGURATING THE FOOTER OF THE PAGE*/
+footer{
+    clear: both;
+    font-family: calibri;
+    color: white;
+    background-color: black;
+    text-decoration: underline;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    text-align: center;
+    
+}
+
+footer img{
+    max-height: 70px;
+}
+
+#footerDIv{
+    clear: both;
+}
