@@ -56,6 +56,10 @@ if (isset($_POST["register"])) {
 if (isset($_POST["admin"])) {
     header('location:admin_account_login.php');
 }
+
+if (isset($_POST["submitFile"])) {
+    header('location:processFile.py');
+}
 ?>
 
 <!DOCTYPE html>
@@ -91,6 +95,10 @@ if (isset($_SESSION["Create"])) {
         <input type="submit" value="Register" name="register">
     </p>
 
+    <p>
+        Do you have a list of people to submit?<br>
+        <input type="submit" value="Submit File" name="submitFile">
+    </p>
     <p>
         Admin Account?<br>
         <input type="submit" value="Log in" name="admin">
