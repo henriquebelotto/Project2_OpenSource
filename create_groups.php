@@ -192,6 +192,59 @@ if (isset($_SESSION['admin'])) {
         //                   "interedID - dateID - 2"
         // and goes on...
         // store these group numbers into the DB
+    function assignGroup()
+    {
+        //get information
+        $interestID=$_POST['interestID'];
+        $dateID=$_POST['dateID'];
+        $groupSize=$_POST['groupSize'];
+
+        $dbHost = "localhost";
+        $dbUsername = "root";
+        $dbPassword = "";
+        $dbName = "xyztravelagency";
+        $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
+        or die("Failed to connect.");
+
+        //get current groupID
+        $queryMaxGroup="SELECT MAX(groupID) FROM USERACCOUNT";
+        $maxGroup=mysqli_query($con, $queryMaxGroup);
+        $maxGroup++;
+
+        //select qulified user
+        $query="SELECT registrationid FROM USERACCOUNT
+                WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
+        $result = mysqli_query($con, $query);
+
+        //declare empty array
+        $arrayOfRows = array();
+        //assign all value to new array
+        if ($result) {
+            while ($row = mysqli_fetch_array($result)) {
+                $arrayOfRows = $row;
+            }
+        }
+        //if the group size > exist user
+        if (count($arrayOfRows)<=$groupSize){
+            echo 'The number of people who has the same interest on the same day is: '. count($arrayOfRows);
+            for ($x=0;$x<count($arrayOfRows);$x++){
+                $querySetGroup="UPDATE useraccount SET groupID='$maxGroup' WHERE registrationId='$arrayOfRows[$x]'";
+                $resultSetGroup = mysqli_query($con, $querySetGroup);
+            }
+            //if the group size < exist user
+        }else{
+            $groupNum=ceil(count($arrayOfRows)/$groupSize);
+            for ($g=0;$g<$groupNum;$g++) {
+                for ($x = 0; $x < $groupSize; $x++) {
+                    $n=$x+$groupNum*$g;
+                    $querySetGroup = "UPDATE useraccount SET groupID='$maxGroup' WHERE registrationId='$arrayOfRows[$n]'";
+                    $resultSetGroup = mysqli_query($con, $querySetGroup);
+                }
+            }
+        }
+    }
+
+
         if(isset($_POST['submit'])){
             echo 'Interest:' . $_POST['interestID'] . '<br>';
             echo 'Date:' . $_POST['dateID'] . '<br>';
