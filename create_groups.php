@@ -186,12 +186,6 @@ if (isset($_SESSION['admin'])) {
         </div>
     </div>';
 
-        // CREATE HERE A FUNCTION TO LOOK FOR THE interestID and dateID on the userAccount according to the
-        // selected interestID and dateID and then generate groups according to the group size
-        // can be like group "interedID - dateID - 1"
-        //                   "interedID - dateID - 2"
-        // and goes on...
-        // store these group numbers into the DB
     function assignGroup()
     {
         //get information
@@ -254,11 +248,9 @@ if (isset($_SESSION['admin'])) {
     }
 
 
-        if(isset($_POST['submit'])){
-            echo 'Interest:' . $_POST['interestID'] . '<br>';
-            echo 'Date:' . $_POST['dateID'] . '<br>';
-            echo 'group number: ' . $_POST['groupSize'] . '<br>';
+
             assignGroup();
+
         }
 
 echo '</div>    
