@@ -1,8 +1,10 @@
 #!c:\Python\python.exe
+print("Content-Type: text/html \n\n")
+# import pandas as pd
 import cgi
 import os
 import cgitb; cgitb.enable()
-print("Content-Type: text/html \n\n")
+
 
 
 
@@ -53,12 +55,23 @@ names = []
 interests = []
 dates = []
 
+fileRawData = dict()
+# empty groups
+groups = []
+
+interestsUnique = set()
+datesUnique = set()
+
+
 
 groupSize = form.getvalue('groupSize')
 
 # verifying that a group size was entered by the user
 if groupSize is None:
     message = "You must enter the group size before submitting the file"
+    
+# if groupSize is defined (must be bigger than 0, the website ensure that)
+# then read the file and create the groups
 else:
     try:
         fileitem = form.getvalue('fileupload')
@@ -73,9 +86,23 @@ else:
         message = 'The file "' + fn + '"was uploaded successfully'
         content = file.read().splitlines()
         for line in content:
+
             names.append(line.split(';')[0])
             interests.append(line.split(';')[1])
             dates.append(line.split(';')[2])
+
+            # Creating sets to have unique values and create possible groups based on these values
+            interestsUnique.add(line.split(';')[1])
+            datesUnique.add(line.split(';')[2])
+            # empty groups for now
+            groups.append("")
+
+        fileRawData["names"] = names
+        fileRawData["interests"] = interests
+        fileRawData["dates"] = dates
+
+
+
 
         
 
@@ -91,3 +118,7 @@ print("""       <div>
                 </div>            
             </div>
         </div>""")
+
+print(fileRawData)
+# df = pd.DataFrame(fileRawData)
+# df.head()
