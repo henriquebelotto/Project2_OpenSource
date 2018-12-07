@@ -11,23 +11,22 @@ session_start();
 function showCurrentUsers()
 {
 //connect to database
-$dbHost = "localhost";
-$dbUsername = "root";
-$dbPassword = "";
-$dbName = "xyztravelagency";
-$con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
-or die("Failed to connect.");
+    $dbHost = "localhost";
+    $dbUsername = "root";
+    $dbPassword = "";
+    $dbName = "xyztravelagency";
+    $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
+    or die("Failed to connect.");
 
 //Retrieve All
-$query = "Select * from useraccount";
-$resultAccounts = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
+    $query = "Select * from useraccount";
+    $resultAccounts = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
 
-$query = "Select * from date";
-$resultDates = mysqli_query($con,$query) or die ("query is failed. " . mysqli_error($con));
+    $query = "Select * from date";
+    $resultDates = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
 
 
-
-echo "<table class='table-striped table-bordered text-center table-hover'>";
+    echo "<table class='table-striped table-bordered text-center table-hover'>";
     echo "<tr>
         <th>Name</th>
         <th>Email</th>
@@ -40,14 +39,14 @@ echo "<table class='table-striped table-bordered text-center table-hover'>";
 
         // Search the "date" table for the dateID obtained from the userAccount and return the "date"
         $query = "SELECT date FROM date WHERE dateID = '$row[dateID]'";
-        $resultDate = mysqli_query($con,$query) or die ("query is failed. " . mysqli_error($con));
+        $resultDate = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
         $rowDate = mysqli_fetch_assoc($resultDate);
 
         // Search the "Interest" table for the interestID obtained from the userAccount and return the "description"
         $query = "SELECT description FROM interest WHERE interestID = '$row[interestID]'";
-        $resultInterest = mysqli_query($con,$query) or die ("query is failed. " . mysqli_error($con));
+        $resultInterest = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
         $rowInterest = mysqli_fetch_assoc($resultInterest);
-    echo "<tr>
+        echo "<tr>
         <td>$row[name]</td>
         <td>$row[email]</td>
         <td>$row[registrationID]</td>
@@ -57,7 +56,7 @@ echo "<table class='table-striped table-bordered text-center table-hover'>";
     </tr>";
     }
     echo "</table>";
-mysqli_close($con);
+    mysqli_close($con);
 }
 
 // function to get the interests from the database
@@ -146,8 +145,8 @@ if (isset($_SESSION['admin'])) {
 
         <div class="row justify-content-center">
             <div class="col-8">';
-            showCurrentUsers();
-        echo '
+    showCurrentUsers();
+    echo '
             </div>
             <form method="post" class="col-4">            
                 <div >
@@ -157,19 +156,19 @@ if (isset($_SESSION['admin'])) {
                         <label class="col-form-label"><b>Interests Available:</b></label>
                         <select class="form-control" name="interestID">';
 
-                            // Updating the drop-down list from the date table
-                            getInterests();
+    // Updating the drop-down list from the date table
+    getInterests();
 
-                        echo '</select>
+    echo '</select>
                     </div>
                     <div class="form-group col">
                         <label class="form-group col"><b>Dates Available:</b></label>
                         <select class="form-control" name="dateID">';
 
-                            // Updating the drop-down list from the date table
-                            getDates();
+    // Updating the drop-down list from the date table
+    getDates();
 
-                    echo '</select>
+    echo '</select>
                     </div>
     
                     <div class="form-group col">
@@ -186,18 +185,18 @@ if (isset($_SESSION['admin'])) {
         </div>
     </div>';
 
-        // CREATE HERE A FUNCTION TO LOOK FOR THE interestID and dateID on the userAccount according to the
-        // selected interestID and dateID and then generate groups according to the group size
-        // can be like group "interedID - dateID - 1"
-        //                   "interedID - dateID - 2"
-        // and goes on...
-        // store these group numbers into the DB
+    // CREATE HERE A FUNCTION TO LOOK FOR THE interestID and dateID on the userAccount according to the
+    // selected interestID and dateID and then generate groups according to the group size
+    // can be like group "interedID - dateID - 1"
+    //                   "interedID - dateID - 2"
+    // and goes on...
+    // store these group numbers into the DB
     function assignGroup()
     {
         //get information
-        $interestID=$_POST['interestID'];
-        $dateID=$_POST['dateID'];
-        $groupSize=$_POST['groupSize'];
+        $interestID = $_POST['interestID'];
+        $dateID = $_POST['dateID'];
+        $groupSize = $_POST['groupSize'];
 
         $dbHost = "localhost";
         $dbUsername = "root";
@@ -207,64 +206,75 @@ if (isset($_SESSION['admin'])) {
         or die("Failed to connect.");
 
         //get current groupID
-        $queryMaxGroup="SELECT MAX(groupID) FROM USERACCOUNT";
-        $maxGroup=mysqli_query($con, $queryMaxGroup) or die("Failed to get group number" . mysqli_error($con));
-        if ($maxGroup=""){
-            $maxGroup=0;
+        $queryMaxGroup = "SELECT MAX(groupID) FROM USERACCOUNT";
+        $resultMaxGroup = mysqli_query($con, $queryMaxGroup) or die("Failed to get group number" . mysqli_error($con));
+        $maxGroup = mysqli_fetch_row($resultMaxGroup);
+        if ($maxGroup[0] == '') {
+            $maxGroup = 1;
+        } else {
+            $maxGroup = $maxGroup[0] + 1;
         }
-        $maxGroup++;
+
 
         //select qulified user
-        $query="SELECT registrationid FROM USERACCOUNT
+        $query = "SELECT registrationid FROM USERACCOUNT
                 WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
         $result = mysqli_query($con, $query) or die("Select Error" . mysqli_error($con));
 
+        $interestNum = mysqli_num_rows($result);
         //declare empty array
-        $arrayOfRows = array();
         //assign all value to new array
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $arrayOfRows[] = $row;
-            }
-        }
-        print_r($arrayOfRows);
+        $query = "SELECT registrationid FROM USERACCOUNT
+                WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
+        $result = mysqli_query($con, $query) or die("Select Error" . mysqli_error($con));
+
+
         //if the group size > exist user
-        $interestNum = count($arrayOfRows);
-        if (count($arrayOfRows)<=$groupSize){
-            echo 'The number of people who has the same interest on the same day is: '. $interestNum;
-//            for ($x=0;$x<$interestNum;$x++){
-//                $querySetGroup="UPDATE useraccount SET groupID='$maxGroup' WHERE registrationId='$arrayOfRows[$x]'";
-//                $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
-//            }
-            foreach($arrayOfRows as $row ){
-                $querySetGroup = "UPDATE useraccount SET groupID='$maxGroup' WHERE registrationID='$row[registrationID]'";
+
+        if ($interestNum <= $groupSize) {
+            echo 'The number of people who has the same interest on the same day is: ' . $interestNum;
+            while ($row = mysqli_fetch_array($result)) {
+                $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
                 $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
             }
             //if the group size < exist user
-        }else{
-            $groupNum=ceil(count($arrayOfRows)/$groupSize);
-            for ($g=0;$g<$groupNum;$g++) {
-                for ($x = 0; $x < $groupSize; $x++) {
-                    $n=$x+$groupNum*$g;
-                    $querySetGroup = "UPDATE useraccount SET groupID='$maxGroup' WHERE registrationId='$arrayOfRows[$n]'";
-                    $resultSetGroup = mysqli_query($con, $querySetGroup);
+        } else {
+            $groupNum = ceil($interestNum / $groupSize);
+            $singleSize=0;
+            while ($row = mysqli_fetch_array($result)) {
+                //assign the first group
+                if ($singleSize<$groupSize) {
+                    $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
+                    $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
+                    $singleSize++;
+                }
+                //right now: singleSize = groupSize
+                //first group finished, then should assign the second group
+                else {
+                    $singleSize=0;
+                    $maxGroup++;
+                    $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
+                    $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
+                    $singleSize++;
                 }
             }
         }
     }
 
 
-        if(isset($_POST['submit'])){
-            echo 'Interest:' . $_POST['interestID'] . '<br>';
-            echo 'Date:' . $_POST['dateID'] . '<br>';
-            echo 'group number: ' . $_POST['groupSize'] . '<br>';
-            assignGroup();
-        }
+    if (isset($_POST['submit'])) {
+        echo 'Interest:' . $_POST['interestID'] . '<br>';
+        echo 'Date:' . $_POST['dateID'] . '<br>';
+        echo 'group number: ' . $_POST['groupSize'] . '<br>';
+        assignGroup();
+        echo "<script> location.href='create_groups.php'; </script>";
+        exit;
+    }
 
-echo '</div>    
+
+
+    echo '</div>    
     ';
-
-
 
 
 } else {
@@ -272,7 +282,9 @@ echo '</div>
 
     header("location:index.php");
 }
- ?>
+
+
+?>
 
 
 
