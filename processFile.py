@@ -25,6 +25,9 @@ print("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">"
 print("<div class=\"container\">")
 print("""<div class=\"jumbotron bg-success\">
             <h1 class=\"text-center\">Submit your own group</h1>
+                <div>
+                    <a href="index.php">Return to the Previous Page</p></a>
+                </div>
          </div>""")
 
 print("""<div class=\"row\">
@@ -42,7 +45,7 @@ print("""<div class=\"row\">
                         </div>
                 
                         <div class=\"mb-3\">
-                            <button class=\"btn btn-success\" type=\"submit\" value=\"submit\" name=\"submit\">Create Account</button>                
+                            <button class=\"btn btn-success\" type=\"submit\" value=\"submit\" name=\"submit\">Create Groups</button>                
                         </div>       
                     </div>
                 </form>            
@@ -55,32 +58,35 @@ names = []
 interests = []
 dates = []
 
-fileRawData = dict()
 # empty groups
 groups = []
 
+# Sets that will be used to create all the possible groups
 interestsUnique = set()
 datesUnique = set()
 
+# dictionary that will hold all the possible groups!
+allGroups = dict()
 
 
+# get the groupSize from the form
 groupSize = form.getvalue('groupSize')
+# groupSize = int(groupSize)
 
-# verifying that a group size was entered by the user
-if groupSize is None:
-    message = "You must enter the group size before submitting the file"
-    
+
 # if groupSize is defined (must be bigger than 0, the website ensure that)
 # then read the file and create the groups
-else:
+if groupSize is not None:
     try:
         fileitem = form.getvalue('fileupload')
+        groupSize = int(groupSize)
     except NameError:
         fileitem = None
+    #
+    # # if fileitem is None:
+    #     message = "No file Uploaded"
 
-    if fileitem is None:
-        message = "No file Uploaded"
-    else:
+    if fileitem is not None:
         fn = os.path.basename(fileitem)
         file = open(fn, 'r')
         message = 'The file "' + fn + '"was uploaded successfully'
@@ -95,30 +101,68 @@ else:
             interestsUnique.add(line.split(';')[1])
             datesUnique.add(line.split(';')[2])
             # empty groups for now
-            groups.append("")
+            groups.append("Not Assigned")
 
-        fileRawData["names"] = names
-        fileRawData["interests"] = interests
-        fileRawData["dates"] = dates
+        # Fill up the allGroups dictionary using the key as interest + date (one string)
+        for interest in interestsUnique:
+            for date in datesUnique:
+                key = interest + date
+                allGroups[key] = []
 
+        # number of people added using the file
+        numOfPeople = len(names)
 
+        # looping for interests and dates lists and using their value (for each x) as a key
+        # for the dictionary allGroups and appending the value of x,
+        # which is the person that is interested in that place/date
+        for x in range(0, numOfPeople):
+            key = interests[x] + dates[x]
+            allGroups[key].append(x)
 
+        # Initialize the groupID as = 1
+        groupID = 1
 
-        
+        # Iterate through the allGroups dictionary to search for a list inside it that is equal or bigger than
+        # the groupSize
 
-print("""<div class=\"jumbotron bg-secondary col-8\">
-                <div>
-                    <h4>""" + message + """</h4>
+        for key, value in allGroups.items():
+            if len(value) >= groupSize:
+                numberOfGroups = len(value) // groupSize
+                # floor division, so only complete groups with the groupSize will be created
+                for x in range(0, numberOfGroups * groupSize):
+                    if x > groupSize:
+                        # update the groupID because it means that the loop has iterate
+                        # through more than one groupSize
+                        groupID += 1
+                    # Store into the groups list using the index stored inside each
+                    # list (value) in the allGroups dictionary
+                    groups[value[x]] = groupID
+
+                # update the groupID after the loop was executed
+                groupID += 1
+        message = ""
+
+        print("""<div class=\"jumbotron bg-secondary col-8\">        
+                        <div class=\"text-left\">
+                            <table class=\"table table-striped table-hover\">
+                            <thead class=\"thead-dark\">
+                            <tr>
+                                <th scope=\"col\">#</th>
+                                <th scope=\"col\">Name</th>
+                                <th scope=\"col\">Interest</th>
+                                <th scope=\"col\">Date</th>
+                                <th scope=\"col\">Group</th>
+                            <tr>
+                            </thead>
+                            """)
+        for x in range(0,len(names)):
+            print("<tr>")
+            print("<th scope=\"row\">",x + 1,"</th>")
+            print("<td>", names[x], "</td>")
+            print("<td>", interests[x], "</td>")
+            print("<td>", dates[x], "</td>")
+            print("<td>", groups[x], "</td>")
+            print("</tr>")
+        print("""       </div>            
+                    </div>
                 </div>""")
-
-
-print("""       <div>
-                     
-                    
-                </div>            
-            </div>
-        </div>""")
-
-print(fileRawData)
-# df = pd.DataFrame(fileRawData)
-# df.head()
