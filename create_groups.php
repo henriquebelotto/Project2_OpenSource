@@ -1,13 +1,11 @@
 <!--/**-->
 <!--* Open Source Programming - CPAN-204 - Project 2-->
-<!--* Group: Fuchun Chao - N01210879-->
+<!--* Group: Fuchun Chai - N01210879-->
 <!--*        Henrique R Belotto - N01245990-->
 <!--*/-->
 
 <?php
-
 session_start();
-
 function showCurrentUsers()
 {
 //connect to database
@@ -17,15 +15,11 @@ function showCurrentUsers()
     $dbName = "xyztravelagency";
     $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
     or die("Failed to connect.");
-
 //Retrieve All
     $query = "Select * from useraccount";
     $resultAccounts = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
-
     $query = "Select * from date";
     $resultDates = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
-
-
     echo "<table class='table-striped table-bordered text-center table-hover'>";
     echo "<tr>
         <th>Name</th>
@@ -36,12 +30,10 @@ function showCurrentUsers()
         <th>Group Assigned</th>      
     </tr>";
     while (($row = mysqli_fetch_assoc($resultAccounts)) == true) {
-
         // Search the "date" table for the dateID obtained from the userAccount and return the "date"
         $query = "SELECT date FROM date WHERE dateID = '$row[dateID]'";
         $resultDate = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
         $rowDate = mysqli_fetch_assoc($resultDate);
-
         // Search the "Interest" table for the interestID obtained from the userAccount and return the "description"
         $query = "SELECT description FROM interest WHERE interestID = '$row[interestID]'";
         $resultInterest = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
@@ -58,7 +50,6 @@ function showCurrentUsers()
     echo "</table>";
     mysqli_close($con);
 }
-
 // function to get the interests from the database
 function getInterests()
 {
@@ -75,9 +66,7 @@ function getInterests()
             echo "<option value='$row[interestID]'>$row[description]</option>";
         }
     }
-
 }
-
 // Function to get the dates from the database
 function getDates()
 {
@@ -95,7 +84,6 @@ function getDates()
         }
     }
 }
-
 ?>
 
 
@@ -118,10 +106,8 @@ function getDates()
 </head>
 <body>
 <?php
-
 if (isset($_SESSION['admin'])) {
     $_SESSION["admin"] = 1;
-
     echo '
 <div class="container">
     <div class="jumbotron bg-secondary row">
@@ -141,7 +127,6 @@ if (isset($_SESSION['admin'])) {
            <div class="mb-3">
                 <h2 class="text-center">Current Users</h2>
            </div>
-
         <div class="row justify-content-center">
             <div class="col-8">';
     showCurrentUsers();
@@ -154,19 +139,15 @@ if (isset($_SESSION['admin'])) {
     
                         <label class="col-form-label"><b>Interests Available:</b></label>
                         <select class="form-control" name="interestID">';
-
     // Updating the drop-down list from the date table
     getInterests();
-
     echo '</select>
                     </div>
                     <div class="form-group col">
                         <label class="form-group col"><b>Dates Available:</b></label>
                         <select class="form-control" name="dateID">';
-
     // Updating the drop-down list from the date table
     getDates();
-
     echo '</select>
                     </div>
     
@@ -183,21 +164,18 @@ if (isset($_SESSION['admin'])) {
             </form>
         </div>
     </div>';
-
     function assignGroup()
     {
         //get information
         $interestID = $_POST['interestID'];
         $dateID = $_POST['dateID'];
         $groupSize = $_POST['groupSize'];
-
         $dbHost = "localhost";
         $dbUsername = "root";
         $dbPassword = "";
         $dbName = "xyztravelagency";
         $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
         or die("Failed to connect.");
-
         //get current groupID
         $queryMaxGroup = "SELECT MAX(groupID) FROM USERACCOUNT";
         $resultMaxGroup = mysqli_query($con, $queryMaxGroup) or die("Failed to get group number" . mysqli_error($con));
@@ -207,23 +185,17 @@ if (isset($_SESSION['admin'])) {
         } else {
             $maxGroup = $maxGroup[0] + 1;
         }
-
-
         //select qulified user
         $query = "SELECT registrationid FROM USERACCOUNT
                 WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
         $result = mysqli_query($con, $query) or die("Select Error" . mysqli_error($con));
         //get the number of same interest & date
         $interestNum = mysqli_num_rows($result);
-
         //select qualified user again for group
         $query = "SELECT registrationid FROM USERACCOUNT
                 WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
         $result = mysqli_query($con, $query) or die("Select Error" . mysqli_error($con));
-
-
         //if the group size > exist user
-
         if ($interestNum < $groupSize) {
             // sol1: divide into group even without enough people
 //            echo 'The number of people who has the same interest on the same day is: ' . $interestNum;
@@ -231,11 +203,10 @@ if (isset($_SESSION['admin'])) {
 //                $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
 //                $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
 //            }
-
             //sol2: the user won't be assigned to group
             while ($row = mysqli_fetch_array($result)) {
                 echo $row[0] . ", this person has not been put into group yet, becuase there are not enough people."
-                . "<br>";
+                    . "<br>";
             }
             echo "There are $interestNum people have the same interest on the same day. Please adjust group size or wait
                     for more people to join!";
@@ -271,8 +242,6 @@ if (isset($_SESSION['admin'])) {
             }
         }
     }
-
-
     if (isset($_POST['submit'])) {
         echo 'group size: ' . $_POST['groupSize'] . '<br>';
         assignGroup();
@@ -280,20 +249,10 @@ if (isset($_SESSION['admin'])) {
 //        echo "<script> location.href='create_groups.php'; </script>";
 //        exit;
     }
-
-
     echo '</div>    
     ';
-
-
 } else {
     // User not authorized to access this web page. Redirect to login page
-
     header("location:index.php");
 }
-
-
 ?>
-
-
-
