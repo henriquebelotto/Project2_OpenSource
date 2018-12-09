@@ -28,7 +28,7 @@ if (isset($_POST["login"])) {
             $registrationID = mysqli_real_escape_string($con, $_POST["registrationID"]);
 
             //check login in information
-            $queryLogin = "SELECT * FROM useraccounts WHERE email= '$email' AND registrationID = '$registrationID'";
+            $queryLogin = "SELECT * FROM useraccount WHERE email= '$email' AND registrationID = '$registrationID'";
             $result = mysqli_query($con, $queryLogin);
             $row = mysqli_fetch_assoc($result);
             if (mysqli_num_rows($result) > 0) {
@@ -36,7 +36,7 @@ if (isset($_POST["login"])) {
                 $_SESSION["ticket"] = 1;
                 $_SESSION["email"] = $row["email"];
                 $_SESSION["registrationID"] = $row["registrationID"];
-                header('location:report_page.php');
+                header('location:user_main.php');
             } else {
                 echo "Failed to Login";
             }
