@@ -1,24 +1,14 @@
 <?php
-
 session_start();
-
 function showCurrentUsers()
 {
     //connect to database
     $dbHost = "localhost";
     $dbUsername = "root";
     $dbPassword = "";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> New
-=======
->>>>>>> 719d6225b327b3a19cfcd43d08b230635d4951ca
     $dbName = "xyztravelagency";
     $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
     or die("Failed to connect.");
-
     //Retrieve All
     $query = "Select * from useraccount";
     $result = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
@@ -48,7 +38,6 @@ function showCurrentUsers()
     echo "</table>";
     mysqli_close($con);
 }
-
 //function to search informaiton
 function showInfo($column, $info)
 {
@@ -60,7 +49,6 @@ function showInfo($column, $info)
     or die("Failed to connect.");
     $query = "Select * from useraccount where `$column` LIKE '%$info%'";
     $result = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
-
     if ($result == true) {
         echo "<table border='1' >";
         echo "<tr>
@@ -89,7 +77,6 @@ function showInfo($column, $info)
     }
     mysqli_close($con);
 }
-
 function searchUser()
 {
 //User can enter any one piece of information and search in databse
@@ -102,7 +89,6 @@ function searchUser()
         $interest = htmlspecialchars($_POST["interest"]);
         $groupID = htmlspecialchars($_POST["groupID"]);
         $date = htmlspecialchars($_POST["date"]);
-
         if (!empty($email)) {
             showInfo("email", $email);
         } else {
@@ -130,7 +116,6 @@ function searchUser()
                                         echo "Record does not found.";
                                 }
                             }
-
                         }
                     }
                 }
@@ -138,7 +123,6 @@ function searchUser()
         }
     }
 }
-
 function updatePiece($fieldName, $newValue){
     $dbHost = "localhost";
     $dbUsername = "root";
@@ -146,21 +130,16 @@ function updatePiece($fieldName, $newValue){
     $dbName = "xyztravelagency";
     $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName) or die("Failed to Connect " . mysqli_error($con));
     $registrationID = htmlspecialchars($_POST["registrationID"]);
-
-
-
     if (!empty($newValue)){
         $query = "Update useraccount Set $fieldName = '$newValue' where registrationID ='$registrationID'";
         $result = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
         $number = mysqli_affected_rows($con);
         if ($number > 0)
             echo "$fieldName Updated Successfully to $newValue. <br>";
-
         else
             echo "$fieldName Failed to Update.";
     }
 }
-
 function update()
 {
     $email = htmlspecialchars($_POST["email"]);
@@ -170,7 +149,6 @@ function update()
     $interest = htmlspecialchars($_POST["interest"]);
     $groupID = htmlspecialchars($_POST["groupID"]);
     $date = htmlspecialchars($_POST["date"]);
-
     updatePiece("email", $email);
     updatePiece("name", $name);
     updatePiece("address", $address);
@@ -179,8 +157,6 @@ function update()
     updatePiece("groupID", $groupID);
     updatePiece("dateID", $date);
 }
-
-
 function DeleteByRegistrationID()
 {
     if (isset($_POST['DeleteByRegistrationID'])) {
@@ -195,8 +171,6 @@ function DeleteByRegistrationID()
         $result = mysqli_query($con, $query) or die ("query is failed. " . mysqli_error($con));
     }
 }
-
-
 ?>
 </body>
 </html>
@@ -222,9 +196,7 @@ function DeleteByRegistrationID()
 <?php
 if (isset($_SESSION['admin'])) {
     $_SESSION["admin"] = 1;
-
     echo '
-
     <div class="jumbotron bg-secondary row">
         <div class="col text-left">
             <a href="admin_account_main.php">Return to the Previous Page</p></a>
@@ -313,15 +285,12 @@ if (isset($_SESSION['admin'])) {
             <button type="submit" value="update" name="Update" >Update by RegistrationID</button>
         </p>
     </form>';
-
     if (isset($msg)) {
         echo $msg;
     }
-
     if (isset($_POST["Update"])) {
         update();
     }
-
     if (isset($_POST["FIND"])) {
         searchUser();
     } else if (isset($_POST["DeleteByRegistrationID"])) {
@@ -330,11 +299,8 @@ if (isset($_SESSION['admin'])) {
     } else {
         showCurrentUsers();
     }
-
-
 } else {
     // User not authorized to access this web page. Redirect to login page
-
     header("location:index.php");
 }
 ?>
