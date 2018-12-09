@@ -113,7 +113,7 @@ function getDates()
     <script src="script/tether.js"></script>
     <script src="script/bootstrap.js"></script>
     <script type="text/javascript" src="script/javascript.js"></script>
-    <title>XYZ Company - Create Guest Account</title>
+    <title>XYZ Company - Create Group</title>
 
 </head>
 <body>
@@ -136,7 +136,6 @@ if (isset($_SESSION['admin'])) {
             <a href="logout.php"><img class="img-thumbnail img-fluid" src="img/logout.png" style="background-color: lightgreen; height: 6vh"></a>
         </div>
     </div>
-    
     
     <div class="jumbotron bg-secondary text-center">
            <div class="mb-3">
@@ -214,10 +213,10 @@ if (isset($_SESSION['admin'])) {
         $query = "SELECT registrationid FROM USERACCOUNT
                 WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
         $result = mysqli_query($con, $query) or die("Select Error" . mysqli_error($con));
-
+        //get the number of same interest & date
         $interestNum = mysqli_num_rows($result);
-        //declare empty array
-        //assign all value to new array
+
+        //select qualified user again for group
         $query = "SELECT registrationid FROM USERACCOUNT
                 WHERE interestID='$interestID' AND dateID='$dateID' AND groupID=''";
         $result = mysqli_query($con, $query) or die("Select Error" . mysqli_error($con));
@@ -225,16 +224,26 @@ if (isset($_SESSION['admin'])) {
 
         //if the group size > exist user
 
-        if ($interestNum <= $groupSize) {
-            echo 'The number of people who has the same interest on the same day is: ' . $interestNum;
+        if ($interestNum < $groupSize) {
+            // sol1: divide into group even without enough people
+//            echo 'The number of people who has the same interest on the same day is: ' . $interestNum;
+//            while ($row = mysqli_fetch_array($result)) {
+//                $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
+//                $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
+//            }
+
+            //sol2: the user won't be assigned to group
             while ($row = mysqli_fetch_array($result)) {
-                $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
-                $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
+                echo $row[0] . ", this person has not been put into group yet, becuase there are not enough people."
+                . "<br>";
             }
+            echo "There are $interestNum people have the same interest on the same day. Please adjust group size or wait
+                    for more people to join!";
             //if the group size < exist user
         } else {
             $groupNum = ceil($interestNum / $groupSize);
-            $singleSize=0;
+            $singleSize=0;//the of people the group has now
+            $groupsHave=1;//the group have now
             while ($row = mysqli_fetch_array($result)) {
                 //assign the first group
                 if ($singleSize<$groupSize) {
@@ -245,11 +254,19 @@ if (isset($_SESSION['admin'])) {
                 //right now: singleSize = groupSize
                 //first group finished, then should assign the second group
                 else {
-                    $singleSize=0;
-                    $maxGroup++;
-                    $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
-                    $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
-                    $singleSize++;
+                    $groupsHave++;
+                    //for leftover
+                    if ($groupsHave<$groupNum){
+                        $singleSize=0;
+                        $maxGroup++;
+                        $querySetGroup = "UPDATE useraccount SET groupID=$maxGroup WHERE registrationId='$row[0]'";
+                        $resultSetGroup = mysqli_query($con, $querySetGroup) or die("Assign Error" . mysqli_error($con));
+                        $singleSize++;
+                    }else{//for leftover
+                        echo
+                            $row[0] . " , this people have not been put into group. 
+                                            Please adjust group size or wait for more people to join!" . "<br>";
+                    }
                 }
             }
         }
@@ -257,14 +274,12 @@ if (isset($_SESSION['admin'])) {
 
 
     if (isset($_POST['submit'])) {
-        echo 'Interest:' . $_POST['interestID'] . '<br>';
-        echo 'Date:' . $_POST['dateID'] . '<br>';
-        echo 'group number: ' . $_POST['groupSize'] . '<br>';
+        echo 'group size: ' . $_POST['groupSize'] . '<br>';
         assignGroup();
-        echo "<script> location.href='create_groups.php'; </script>";
-        exit;
+        echo "<br>" . "Please refresh the page to see the assigned result.";
+//        echo "<script> location.href='create_groups.php'; </script>";
+//        exit;
     }
-
 
 
     echo '</div>    
