@@ -185,8 +185,7 @@
             </div>
 
             <div class="form-group form-inline justify-content-center">
-                <button class="btn btn-success mr-3" type="submit" value="submit" name="submit">Create Account
-                </button>
+                <button class="btn btn-success mr-3" type="submit" value="submit" name="submit">Create Account</button>
                 <button class="btn btn-danger" type="reset" value="reset">Clear</button>
             </div>
 
