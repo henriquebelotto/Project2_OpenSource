@@ -10,6 +10,10 @@ function showCurrentUsers()
     // APPLE MACHINES REQUIRES A PASSWORD, WHILE WINDOWS MACHINES DON'T
 //    $dbPassword = "root";
     $dbPassword = "";
+<<<<<<< HEAD
+=======
+
+>>>>>>> New
     $dbName = "xyztravelagency";
     $con = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName)
     or die("Failed to connect.");
